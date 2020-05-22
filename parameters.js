@@ -64,6 +64,14 @@ document.getElementById('time_to_recover').addEventListener('change', function (
 
 document.getElementById('time_to_recover').value = time_to_recover;
 
+//Speed
+document.getElementById('speed_range').addEventListener('input', function (e) {
+    speed=this.value;
+    document.getElementById('speed_text').innerText= Math.round(speed);
+});
+
+document.getElementById('speed_range').value = speed;
+document.getElementById('speed_text').innerText = speed;
 
 //Buttons
 document.getElementById('control_start').addEventListener('click', function (e) {
