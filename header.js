@@ -9,7 +9,7 @@ var counters = {
 var statistics = {
     reset: function() {
         this.totalPeople = init_population;
-        this.currentCured = 0;
+        this.currentRecovered = 0;
         this.currentInfected = init_infected;
     },
 
@@ -32,18 +32,18 @@ var statistics = {
         counters.healthy.innerHTML = this.currentHealthy;
     },
     
-    /* Current cured */
-    get currentCured() {
-        return this._currentCured;
+    /* current recovered */
+    get currentRecovered() {
+        return this._currentRecovered;
     },
-    set currentCured(value) {
-        this._currentCured = value;
-        counters.immune.innerHTML = this._currentCured;
+    set currentRecovered(value) {
+        this._currentRecovered = value;
+        counters.immune.innerHTML = this._currentRecovered;
         counters.healthy.innerHTML = this.currentHealthy;
     },
 
     /* Current healthy */
     get currentHealthy() {
-        return this._totalPeople - this._currentInfected - this.currentCured;
+        return this._totalPeople - this._currentInfected - this.currentRecovered;
     },
 }

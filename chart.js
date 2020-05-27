@@ -67,7 +67,7 @@ var config = {
                 ticks: {
                     suggestedMax: init_population,
                 },
-                stacked: true
+                stacked: false
             }]
         },
         annotation: {
@@ -106,7 +106,7 @@ function pushData(total_healthy, total_infected, total_cured) {
 }
 
 function updateChart() {
-    pushData(statistics.currentHealthy, statistics.currentInfected, statistics.currentCured);
+    pushData(statistics.currentHealthy, statistics.currentInfected, statistics.currentRecovered);
 
     if (statistics.currentInfected === 0) {
         clearInterval(updateChartInterval);

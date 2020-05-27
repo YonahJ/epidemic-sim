@@ -85,13 +85,17 @@ function resolveCollision(particle, otherParticle) {
 
 
 // Objects
+function move() {
+  return speed;
+}
 function Circle(x, y, radius, color) {
     this.x = x;
     this.y = y;
+    this.cSpeed = speed;
     this.velocity= {
       //speed of our particules 
-      x: (Math.random() - 0.5)*speed,
-      y: (Math.random() - 0.5)*speed
+      x: (Math.random() )*this.cSpeed,
+      y: (Math.random() )*this.cSpeed
     };
     this.radius = radius;
     this.color = color;
@@ -107,12 +111,28 @@ function Circle(x, y, radius, color) {
 
   this.update = circles => {
     this.draw()
+    
+    if(social_distancing){
+      if(init_population>=600){
+        sd_factor=10;
+      } else if(init_population>=300 && init_population<600){
+        sd_factor=20;
+      } else {
+        sd_factor= 70;
+      }
+    }else {
+      sd_factor = 0;
+    }
+
 
     for (let i = 0; i < circles.length; i++) {
       if(this === circles[i]) continue;
 
-      if (distance(this.x, this.y, circles[i].x,circles[i].y)-this.radius*2<0) {
+      if (distance(this.x, this.y, circles[i].x,circles[i].y)-this.radius*2<sd_factor) {
         resolveCollision(this,circles[i]); 
+      }
+
+      if (distance(this.x, this.y, circles[i].x,circles[i].y)-this.radius*2<0) { 
         transmit_infection(this,circles[i]);   
       }
       
@@ -162,6 +182,7 @@ function transmit_infection(c1, c2) {
   }
 }
 
+
 function init() {
   circles = [];
   for (let i = 0; i < init_population; i++) {
@@ -206,6 +227,15 @@ function stopSimulation() {
   statistics.reset();    
 }
 
+function stopMoving() {
+  y=(people_stop*init_population)/100; //persentage of persons that should stop*init_pop
+  z=Math.round(y); //people that should stop moving
+  console.log(y);
+  for (let i = 0; i < z; i++) {
+    circles[i].cSpeed=0;
+  }
+}
+
 
 function updateAnimationFrame() {
   cancelAnimationFrame(requestAnimationFrameCall);
@@ -214,7 +244,6 @@ function updateAnimationFrame() {
 }
 
 function animate() {
-  runningSimulation = true;
   requestAnimationFrame(animate)
   c.clearRect(0, 0, canvas.width, canvas.height)
    circles.forEach(circle => {
@@ -226,7 +255,8 @@ function animate() {
   recovered_count = summary_count(circles, "green");
          statistics.totalPeople = init_population;
          statistics.currentInfected = infected_count;
-         statistics.currentCured = recovered_count;
+         statistics.currentRecovered = recovered_count;
+         statistics.currentHealthy=healthy_count;
 //added
     /*area_ctx.fillStyle = "blue";
     area_ctx.fillRect(time_counter / 2, 0, 1, healthy_count);

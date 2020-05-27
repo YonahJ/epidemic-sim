@@ -1,17 +1,21 @@
 
 var chance_to_transmit = 100; //chance to transmit 
-var time_to_recover = 14; //time to recover
+var time_to_recover = 7; //time to recover
 var time_counter = 0;
 var init_infected=2; //initaial infected number
 var init_population=30;
 var runningSimulation=false;
 var speed = 5;
 var MAX_INITIAL_POPULATION=1000;
+var people_stop = 0;
+//social distancing vars
+var sd_factor = 0;
+var social_distancing = false;
 
 
 statistics.totalPeople = init_population;
 statistics.currentInfected = init_infected;
-statistics.currentCured = 0;
+statistics.currentRecovered = 0;
 
 //Dashboard control
 //Initial population
@@ -46,7 +50,7 @@ document.getElementById('initial_infected').addEventListener('change', function 
 
 document.getElementById('initial_infected').value = init_infected;
 
-// Infectio rate or chance to transmit
+// InfectioN rate or chance to transmit
 document.getElementById('infection_rate').addEventListener('input', function (e) {
     chance_to_transmit = this.value;
     document.getElementById('infection_rate_text').innerHTML = Math.round(chance_to_transmit);
@@ -73,12 +77,33 @@ document.getElementById('speed_range').addEventListener('input', function (e) {
 document.getElementById('speed_range').value = speed;
 document.getElementById('speed_text').innerText = speed;
 
+
+//Stop people
+document.getElementById('stop_range').addEventListener('input', function (e) {
+    people_stop = this.value;
+    stopMoving();
+    document.getElementById('stop_text').innerHTML = Math.round(people_stop);
+});
+
+document.getElementById('stop_range').value = people_stop;
+document.getElementById('stop_text').innerText = people_stop;
+
+// social distancing 
+document.getElementById('social_distancing').addEventListener('input', function (e) {
+    social_distancing = this.checked;
+});
+
+document.getElementById('social_distancing').checked = social_distancing;
+
 //Buttons
 document.getElementById('control_start').addEventListener('click', function (e) {
-    init()
-    animate();
-    updateChart();
-    updateChartInterval = setInterval(updateChart, 1000);
+    if (runningSimulation==false) {
+        init()
+        animate();
+        updateChart();
+        updateChartInterval = setInterval(updateChart, 1000);
+    }
+    
 });
 
 document.getElementById('control_stop').addEventListener('click', function (e) {
