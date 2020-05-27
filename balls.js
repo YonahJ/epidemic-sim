@@ -105,7 +105,9 @@ function Circle(x, y, radius, color) {
     c.beginPath()
     c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
     c.strokeStyle = this.color
+    c.fillStyle = this.color
     c.stroke()
+    c.fill()
     c.closePath()
   };
 
@@ -187,7 +189,7 @@ function init() {
   circles = [];
   for (let i = 0; i < init_population; i++) {
     //Creating circles i -> nunmber of circles we want
-    const radius = 5;
+    const radius = 2;
     let x = randomIntFromRange(radius,canvas.width-radius);
     let y = randomIntFromRange(radius,canvas.height-radius);
 
