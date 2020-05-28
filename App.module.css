@@ -2,3 +2,29 @@ body{
     background-color: blue;
 }
 
+.container {
+    /*display: flex;*/
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.card{
+    margin: 2% 2% !important;
+}
+
+.card-deck{
+    align-items: center;
+}
+
+#alert_infected {
+    /*margin: ;*/
+    border-bottom: 10px solid rgba(255, 0, 0,0.5); 
+}
+#alert_susceptible {
+    border-bottom: 10px solid rgba(0, 0, 255,0.5); 
+}
+#alert_recovered {
+    border-bottom: 10px solid rgba(0, 255, 0,0.5);
+}
+
