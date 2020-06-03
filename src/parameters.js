@@ -2,15 +2,16 @@
 var chance_to_transmit = 100; //chance to transmit 
 var time_to_recover = 7; //time to recover
 var time_counter = 0;
-var init_infected=2; //initaial infected number
+var init_infected=1; //initaial infected number
 var init_population=30;
 var runningSimulation=false;
-var speed = 5;
+var speed = 4;
 var MAX_INITIAL_POPULATION=1000;
-var people_stop = 0;
 //social distancing vars
 var sd_factor = 0;
 var social_distancing = false;
+//isolation var
+var isolate_infected = false;
 
 
 statistics.totalPeople = init_population;
@@ -68,32 +69,24 @@ document.getElementById('time_to_recover').addEventListener('change', function (
 
 document.getElementById('time_to_recover').value = time_to_recover;
 
-//Speed
-document.getElementById('speed_range').addEventListener('input', function (e) {
-    speed=this.value;
-    document.getElementById('speed_text').innerText= Math.round(speed);
-});
-
-document.getElementById('speed_range').value = speed;
-document.getElementById('speed_text').innerText = speed;
-
-
-//Stop people
-document.getElementById('stop_range').addEventListener('input', function (e) {
-    people_stop = this.value;
-    stopMoving();
-    document.getElementById('stop_text').innerHTML = Math.round(people_stop);
-});
-
-document.getElementById('stop_range').value = people_stop;
-document.getElementById('stop_text').innerText = people_stop;
 
 // social distancing 
 document.getElementById('social_distancing').addEventListener('input', function (e) {
     social_distancing = this.checked;
+    console.log('distancing',social_distancing);
 });
 
 document.getElementById('social_distancing').checked = social_distancing;
+
+//Isolation
+document.getElementById('isolate_infected').addEventListener('input', function (e) {
+    isolate_infected = this.checked;
+    console.log('isolation',isolate_infected);
+});
+
+document.getElementById('isolate_infected').checked = isolate_infected;
+
+
 
 //Buttons
 document.getElementById('control_start').addEventListener('click', function (e) {

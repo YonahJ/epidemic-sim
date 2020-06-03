@@ -1,25 +1,22 @@
 /*
-  Younes JEDDI
-  PFE : Propagatio Vs Confinement
-  SIR -2019/2020-
-  
+    Younes JEDDI
+    PFE : Propagatio Vs Confinement
+    Projet PFE
+    SIR -2019/2020-  
 */
 
 var lineGraph;
-const canvas = document.querySelector('canvas')
-const c = canvas.getContext('2d')
-
-
-
 
 //added
 var area_canvas = document.getElementById("area_chart");
 var area_ctx = area_canvas.getContext("2d");
 
 
-cw = canvas.width //canvas width
-ch = canvas.height //canvas height
+cw = area_canvas.width-100//envronment width
+ch = area_canvas.height //canvas height
 
+h=0;
+w=0;
 
 
 function distance(x1,y1,x2,y2) {
@@ -32,6 +29,17 @@ function distance(x1,y1,x2,y2) {
 //Utility 
 function randomIntFromRange(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+function summary_count(data, query) {
+  var result = 0;
+  for (i = 0; i < data.length; i++) {
+      var obj = data[i];
+      if (obj.color == query) {
+          result++;
+      }
+  }
+  return result;
 }
 
 //Physics of : elastic collision and One-dimensional Newtonian equation 
@@ -83,12 +91,12 @@ function resolveCollision(particle, otherParticle) {
   }
 }
 
+let isolation = [];  //isolation array
 
-// Objects
-function move() {
-  return speed;
-}
+
+// Object
 function Circle(x, y, radius, color) {
+    this.turns=0;
     this.x = x;
     this.y = y;
     this.cSpeed = speed;
@@ -102,11 +110,11 @@ function Circle(x, y, radius, color) {
     this.mass = 1;
 
   this.draw = function () {
-    c.beginPath()
-    c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
-    c.strokeStyle = this.color
-    c.stroke()
-    c.closePath()
+    area_ctx.beginPath()
+    area_ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
+    area_ctx.strokeStyle = this.color
+    area_ctx.stroke()
+    area_ctx.closePath()
   };
 
   this.update = circles => {
@@ -120,17 +128,74 @@ function Circle(x, y, radius, color) {
       } else {
         sd_factor= 70;
       }
-    }else {
-      sd_factor = 0;
+    
+      for (let i = 0; i < circles.length; i++) {
+        if (distance(this.x, this.y, circles[i].x,circles[i].y)-this.radius*2<sd_factor) {
+          resolveCollision(this,circles[i]); 
+         }
+      }
     }
+
+    /*if(isolate_infected) {
+      isolation = [];
+          if(this.color == "red") {
+              console.log('red delete');
+              const is = Object.assign(this);
+              isolation.push(is);
+             // circles.splice(circles.indexOf(this),1);
+          }
+    }*/
+
+    if(isolate_infected) {
+      if(Math.random() * 100 < 50){
+        if(this.color == "red" && this.turns == 0) {
+          this.x = randomIntFromRange(cw+radius,cw+100-radius);
+          this.y = randomIntFromRange(radius,ch-radius);
+          this.turns=1;
+        }
+      }   
+      if(this.color!="red" && this.turns == 1) {
+            this.x = randomIntFromRange(radius,cw-radius);
+            this.y = randomIntFromRange(radius,ch-radius);
+            this.turns=2
+            if(this.x-this.radius<=w || this.x+this.radius>=cw){
+              this.velocity.x=-this.velocity.x;
+            }
+            if(this.y-this.radius<=h || this.y+this.radius>=ch){
+              this.velocity.y=-this.velocity.y;
+            }
+            this.x += this.velocity.x;
+            this.y += this.velocity.y;
+            
+          } 
+
+        if (this.color!="red" && (this.turns == 0 || this.turns == 2) ) {
+          if(this.x-this.radius<=w || this.x+this.radius>=cw){
+            this.velocity.x=-this.velocity.x;
+          }
+          if(this.y-this.radius<=h || this.y+this.radius>=ch){
+            this.velocity.y=-this.velocity.y;
+          }
+          this.x += this.velocity.x;
+          this.y += this.velocity.y;
+        }
+    } else {
+
+      if(this.x-this.radius<=w || this.x+this.radius>=cw){
+        this.velocity.x=-this.velocity.x;
+      }
+      if(this.y-this.radius<=h || this.y+this.radius>=ch){
+        this.velocity.y=-this.velocity.y;
+      }
+      this.x += this.velocity.x;
+      this.y += this.velocity.y;
+    }
+      
+    
 
 
     for (let i = 0; i < circles.length; i++) {
       if(this === circles[i]) continue;
-
-      if (distance(this.x, this.y, circles[i].x,circles[i].y)-this.radius*2<sd_factor) {
-        resolveCollision(this,circles[i]); 
-      }
 
       if (distance(this.x, this.y, circles[i].x,circles[i].y)-this.radius*2<0) { 
         transmit_infection(this,circles[i]);   
@@ -138,16 +203,9 @@ function Circle(x, y, radius, color) {
       
     }
 
-    if(this.x-this.radius<=0 || this.x+this.radius>=cw){
-      this.velocity.x=-this.velocity.x;
-    }
-    if(this.y-this.radius<=0 || this.y+this.radius>=ch){
-      this.velocity.y=-this.velocity.y;
-    }
-    this.x += this.velocity.x;
-    this.y += this.velocity.y;
+   
   };
-}
+}//End of function Circle
 
 // Implementation
 let circles;
@@ -156,16 +214,6 @@ function recover(circle) {
   circle.color = "green";
 }
 
-function summary_count(data, query) {
-  var result = 0;
-  for (i = 0; i < data.length; i++) {
-      var obj = data[i];
-      if (obj.color == query) {
-          result++;
-      }
-  }
-  return result;
-}
 
 function transmit_infection(c1, c2) {
   //tranmit infectio to others when colliding
@@ -187,9 +235,9 @@ function init() {
   circles = [];
   for (let i = 0; i < init_population; i++) {
     //Creating circles i -> nunmber of circles we want
-    const radius = 4;
-    let x = randomIntFromRange(radius,canvas.width-radius);
-    let y = randomIntFromRange(radius,canvas.height-radius);
+    const radius = 3;
+    let x = randomIntFromRange(radius,cw-radius);
+    let y = randomIntFromRange(radius,ch-radius);
 
     let color;
     color="blue";
@@ -203,8 +251,8 @@ function init() {
     if (i !== 0) {
       for (let j = 0; j < circles.length; j++) {
         if (distance(x, y, circles[j].x,circles[j].y)-radius*2<0) {
-          x = randomIntFromRange(radius,canvas.width-radius);
-          y = randomIntFromRange(radius,canvas.height-radius);
+          x = randomIntFromRange(radius,cw-radius);
+          y = randomIntFromRange(radius,ch-radius);
           j=-1;
         }        
       }
@@ -218,49 +266,49 @@ function init() {
     circles[i].color="red";    
     setTimeout(recover, time_to_recover * 1000, circles[i]);
   }
-
+  area_ctx.moveTo(cw, 0);
+  area_ctx.lineTo(cw, ch);
+  area_ctx.stroke();
 }
 
 // Animation Loop
 function stopSimulation() {
   circles=[];
-  statistics.reset();    
-}
-
-function stopMoving() {
-  y=(people_stop*init_population)/100; //persentage of persons that should stop*init_pop
-  z=Math.round(y); //people that should stop moving
-  console.log(y);
-  for (let i = 0; i < z; i++) {
-    circles[i].cSpeed=0;
-  }
+  statistics.reset(); 
 }
 
 
 function updateAnimationFrame() {
   cancelAnimationFrame(requestAnimationFrameCall);
-
   requestAnimationFrameCall = requestAnimationFrame(updateAnimationFrame);
 }
 
+
 function animate() {
   requestAnimationFrame(animate)
-  c.clearRect(0, 0, canvas.width, canvas.height)
+  area_ctx.clearRect(0, 0,cw+100, ch)
+  area_ctx.moveTo(cw, 0);
+  area_ctx.lineTo(cw, ch);
+  area_ctx.stroke(); 
+  //area_ctx.scrollPathIntoView();
    circles.forEach(circle => {
      circle.update(circles);
    });
 
+   //area_ctx.strokeStyle = "black";
+
   infected_count = summary_count(circles, "red");
   healthy_count = summary_count(circles, "blue");
   recovered_count = summary_count(circles, "green");
-         statistics.totalPeople = init_population;
-         statistics.currentInfected = infected_count;
-         statistics.currentRecovered = recovered_count;
-         statistics.currentHealthy=healthy_count;
+  statistics.totalPeople = init_population;
+  statistics.currentInfected = infected_count;
+  statistics.currentRecovered = recovered_count;
+  statistics.currentHealthy=healthy_count;
+
 //added
     /*area_ctx.fillStyle = "blue";
     area_ctx.fillRect(time_counter / 2, 0, 1, healthy_count);
-    area_ctx.transform(1, 0, 0, -1, 0, area_canvas.height);
+    area_ctx.transform(1, 0, 0, -1, 0, ch);
     area_ctx.fillStyle = "green";
     area_ctx.fillRect(
         time_counter / 2,
@@ -270,7 +318,7 @@ function animate() {
     );
     area_ctx.fillStyle = "red";
     area_ctx.fillRect(time_counter / 2, 0, 1, infected_count);
-    area_ctx.transform(1, 0, 0, -1, 0, area_canvas.height);*/
+    area_ctx.transform(1, 0, 0, -1, 0, ch);*/
    
 }
 
