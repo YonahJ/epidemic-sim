@@ -18,6 +18,16 @@ ch = area_canvas.height //canvas height
 h=0;
 w=0;
 
+R0 = (chance_to_transmit/100)/(1/time_to_recover);
+document.getElementById("R0").innerHTML =  "R0  ≈ " + number_format(R0,2);
+
+p1 =(75*init_population)/100;
+    
+    turns2=Math.round(p1)
+    for(j=0; j<p1; j++){
+        rdm.push(randomIntFromRange(0,init_population-1));
+    }
+    console.log(rdm);
 
 function distance(x1,y1,x2,y2) {
   //Calculer la distance entre 2 particule en utilisant le théorème de Pythagore
@@ -29,6 +39,14 @@ function distance(x1,y1,x2,y2) {
 //Utility 
 function randomIntFromRange(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+function number_format(val, decimals){
+  //Parse the value as a float value
+  val = parseFloat(val);
+  //Format the value w/ the specified number
+  //of decimal places and return it.
+  return val.toFixed(decimals);
 }
 
 function summary_count(data, query) {
@@ -95,7 +113,8 @@ let isolation = [];  //isolation array
 
 
 // Object
-function Circle(x, y, radius, color) {
+function Circle(x, y, radius, color, id) {
+    this.id = id;
     this.turns=0;
     this.x = x;
     this.y = y;
@@ -136,15 +155,6 @@ function Circle(x, y, radius, color) {
       }
     }
 
-    /*if(isolate_infected) {
-      isolation = [];
-          if(this.color == "red") {
-              console.log('red delete');
-              const is = Object.assign(this);
-              isolation.push(is);
-             // circles.splice(circles.indexOf(this),1);
-          }
-    }*/
 
     if(isolate_infected) {
       if(Math.random() * 100 < 50){
@@ -202,6 +212,13 @@ function Circle(x, y, radius, color) {
       }
       
     }
+    if(goHome) {
+      if(rdm.includes(this.id)) {
+        this.velocity.x=0;
+        this.velocity.y=0;
+      }
+    }
+      
 
    
   };
@@ -235,6 +252,7 @@ function init() {
   circles = [];
   for (let i = 0; i < init_population; i++) {
     //Creating circles i -> nunmber of circles we want
+    id=i;
     const radius = 3;
     let x = randomIntFromRange(radius,cw-radius);
     let y = randomIntFromRange(radius,ch-radius);
@@ -244,9 +262,9 @@ function init() {
     /*if (i == 1) {
       color = "red";
       setTimeout(recover, time_to_recover * 1000, circles[1])
-  } else {
+    } else {
       color = "blue";
-  }*/
+    }*/
 
     if (i !== 0) {
       for (let j = 0; j < circles.length; j++) {
@@ -257,7 +275,7 @@ function init() {
         }        
       }
     }
-     circles.push(new Circle(x,y,radius,color));
+     circles.push(new Circle(x,y,radius,color,id));
   }
 
   //This allows the user to choose the intial infected number

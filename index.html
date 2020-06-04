@@ -54,6 +54,10 @@
                 <input type="checkbox"  class="custom-control-input" id="isolate_infected">
                 <label class="custom-control-label" for="isolate_infected"><i class="fas fa-ambulance fa-color"></i> Isolate the infected</label>
             </div>
+            <div class="form-group custom-control custom-switch">
+              <input type="checkbox"  class="custom-control-input" id="go_home">
+              <label class="custom-control-label" for="go_home"><i class="fas fa-laptop-house"></i> Lockdown</label>
+            </div>
             <div class="form-group">
               <button type="button" class="btn btn-primary" id="control_start">
                 <svg class="bi bi-play-fill" width="2em" height="2em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -91,6 +95,11 @@
               <div id="alert_recovered" class="card bg-light mb-3 text-center col-md-4">
                 <div class="card-body">
                   <span id="total_recovered"></span> <span data-translate="cured">Recovered</span><br>
+                </div>
+              </div>
+              <div id="alert_recovered" class="card bg-light mb-3 text-center">
+                <div class="card-body">
+                  <span id="R0"></span>
                 </div>
               </div>
           </div>
