@@ -21,7 +21,7 @@ statistics.totalPeople = init_population;
 statistics.currentInfected = init_infected;
 statistics.currentRecovered = 0;
 
-//Dashboard control
+//Dashboard controls :
 //Initial population
 document.getElementById('initial_population').addEventListener('change', function (e) {
     this.value = parseInt(this.value);
@@ -100,7 +100,7 @@ document.getElementById('isolate_infected').addEventListener('input', function (
 
 document.getElementById('isolate_infected').checked = isolate_infected;
 
-//go home
+//lockdown
 document.getElementById('go_home').addEventListener('input', function (e) {
     goHome = this.checked;
     console.log('go home is active',goHome);

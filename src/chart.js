@@ -1,3 +1,4 @@
+//using chart.js
 var updateChartInterval;
 var elapsedDays = 0;
 var COLORS = {

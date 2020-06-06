@@ -141,14 +141,14 @@ function Circle(x, y, radius, color, id) {
     this.draw()
     
     if(social_distancing){
+      //Social distancing : the circle rebound when they approach eachother 
       if(init_population>=600){
         sd_factor=10;
       } else if(init_population>=300 && init_population<600){
         sd_factor=20;
       } else {
-        sd_factor= 70;
+        sd_factor= 30;
       }
-    
       for (let i = 0; i < circles.length; i++) {
         if (distance(this.x, this.y, circles[i].x,circles[i].y)-this.radius*2<sd_factor) {
           resolveCollision(this,circles[i]); 
@@ -158,6 +158,7 @@ function Circle(x, y, radius, color, id) {
 
 
     if(isolate_infected && this.timer==1) {
+      //Isolate the infected using to conditions : 1 isolate infected is true & 2 the timer=1 (we have started the 3 days)
       if(Math.random() * 100 < 50){
         if(this.color == "red" && this.turns == 0) {
           this.x = randomIntFromRange(cw+radius,cw+100-radius);
@@ -166,6 +167,7 @@ function Circle(x, y, radius, color, id) {
         }
       }   
       if(this.color!="red" && this.turns == 1) {
+            //when the infected are recovered they can get out from isolation
             this.x = randomIntFromRange(radius,cw-radius);
             this.y = randomIntFromRange(radius,ch-radius);
             this.turns=2
@@ -180,7 +182,8 @@ function Circle(x, y, radius, color, id) {
             
           } 
 
-        if (this.color!="red" && (this.turns == 0 || this.turns == 2) ) {
+      if (this.color!="red" && (this.turns == 0 || this.turns == 2) ) {
+          //I added this one so the none-infected can keep moving and the recovered can keep moving after exiting isolation
           if(this.x-this.radius<=w || this.x+this.radius>=cw){
             this.velocity.x=-this.velocity.x;
           }
@@ -190,6 +193,7 @@ function Circle(x, y, radius, color, id) {
           this.x += this.velocity.x;
           this.y += this.velocity.y;
         }
+        //End of isolate infected
     } else {
 
       if(this.x-this.radius<=w || this.x+this.radius>=cw){
@@ -206,14 +210,18 @@ function Circle(x, y, radius, color, id) {
 
 
     for (let i = 0; i < circles.length; i++) {
-      if(this === circles[i]) continue;
+      if(this === circles[i]) continue; 
 
-      if (distance(this.x, this.y, circles[i].x,circles[i].y)-this.radius*2<0) { 
+      if (distance(this.x, this.y, circles[i].x,circles[i].y)-this.radius*2<0) {
+        //we trasnmit infection if the distance between two circles is 0 
         transmit_infection(this,circles[i]);   
       }
       
     }
+
     if(goHome) {
+      //if goHome is true we check if the circle is in the array where we have the list of people who sould be
+      //in lockdown => isolation[]
       if(rdm.includes(this.id)) {
         this.velocity.x=0;
         this.velocity.y=0;
@@ -231,21 +239,22 @@ let circles;
 function recover(circle) {
   circle.color = "green";
 }
+
 function isolate(circle) {
   circle.timer = 1;
 }
 
 function transmit_infection(c1, c2) {
-  //tranmit infectio to others when colliding
+  //tranmit infection to others when colliding
   if (c1.color !== "green" && c2.color !== "green") {
       if (c1.color == "red" || c2.color == "red") {
           if (Math.random() * 100 < chance_to_transmit) {
               c1.color = "red";
               c2.color = "red";
-              setTimeout(recover, time_to_recover * 1000, c1);
+              setTimeout(recover, time_to_recover * 1000, c1);//Recoveing timer (1 second <=> 1 day)
               setTimeout(recover, time_to_recover * 1000, c2);
-              setInterval(isolate, 3000, c1);
-              setInterval(isolate, 3000, c2)
+              setInterval(isolate, 3000, c1);//isolation timer
+              setInterval(isolate, 3000, c2);
 
           }
       }
@@ -281,15 +290,17 @@ function init() {
       }
     }
      circles.push(new Circle(x,y,radius,color,id));
+     //end of for
   }
 
   //This allows the user to choose the intial infected number
-  
   for (let i = 0; i <= init_infected-1; i++) {
     circles[i].color="red";    
     setTimeout(recover, time_to_recover * 1000, circles[i]);
     setInterval(isolate, 3000, circles[i])
   }
+
+  //Isolarion line
   area_ctx.moveTo(cw, 0);
   area_ctx.lineTo(cw, ch);
   area_ctx.stroke();
@@ -328,21 +339,6 @@ function animate() {
   statistics.currentInfected = infected_count;
   statistics.currentRecovered = recovered_count;
   statistics.currentHealthy=healthy_count;
-
-//added
-    /*area_ctx.fillStyle = "blue";
-    area_ctx.fillRect(time_counter / 2, 0, 1, healthy_count);
-    area_ctx.transform(1, 0, 0, -1, 0, ch);
-    area_ctx.fillStyle = "green";
-    area_ctx.fillRect(
-        time_counter / 2,
-        0,
-        1,
-        recovered_count + infected_count
-    );
-    area_ctx.fillStyle = "red";
-    area_ctx.fillRect(time_counter / 2, 0, 1, infected_count);
-    area_ctx.transform(1, 0, 0, -1, 0, ch);*/
    
 }
 
