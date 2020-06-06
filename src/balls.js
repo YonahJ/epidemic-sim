@@ -6,7 +6,7 @@
 */
 
 var lineGraph;
-
+myVar = setTimeout(10000000000);
 //added
 var area_canvas = document.getElementById("area_chart");
 var area_ctx = area_canvas.getContext("2d");
@@ -115,6 +115,7 @@ let isolation = [];  //isolation array
 // Object
 function Circle(x, y, radius, color, id) {
     this.id = id;
+    this.timer =0;
     this.turns=0;
     this.x = x;
     this.y = y;
@@ -156,7 +157,7 @@ function Circle(x, y, radius, color, id) {
     }
 
 
-    if(isolate_infected) {
+    if(isolate_infected && this.timer==1) {
       if(Math.random() * 100 < 50){
         if(this.color == "red" && this.turns == 0) {
           this.x = randomIntFromRange(cw+radius,cw+100-radius);
@@ -230,7 +231,9 @@ let circles;
 function recover(circle) {
   circle.color = "green";
 }
-
+function isolate(circle) {
+  circle.timer = 1;
+}
 
 function transmit_infection(c1, c2) {
   //tranmit infectio to others when colliding
@@ -241,6 +244,8 @@ function transmit_infection(c1, c2) {
               c2.color = "red";
               setTimeout(recover, time_to_recover * 1000, c1);
               setTimeout(recover, time_to_recover * 1000, c2);
+              setInterval(isolate, 3000, c1);
+              setInterval(isolate, 3000, c2)
 
           }
       }
@@ -283,6 +288,7 @@ function init() {
   for (let i = 0; i <= init_infected-1; i++) {
     circles[i].color="red";    
     setTimeout(recover, time_to_recover * 1000, circles[i]);
+    setInterval(isolate, 3000, circles[i])
   }
   area_ctx.moveTo(cw, 0);
   area_ctx.lineTo(cw, ch);
