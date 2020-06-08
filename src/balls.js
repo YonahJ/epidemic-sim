@@ -142,6 +142,7 @@ function Circle(x, y, radius, color, id) {
     
     if(social_distancing){
       //Social distancing : the circle rebound when they approach eachother 
+      
       if(init_population>=600){
         sd_factor=10;
       } else if(init_population>=300 && init_population<600){

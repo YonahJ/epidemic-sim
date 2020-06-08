@@ -1,12 +1,12 @@
 
-var chance_to_transmit = 50; //chance to transmit 
-var time_to_recover = 7; //time to recover
+var chance_to_transmit = 14; //chance to transmit 
+var time_to_recover = 14; //time to recover
 var time_counter = 0;
 var init_infected=1; //initaial infected number
 var init_population=50;
 var runningSimulation=false;
 var speed = 4;
-var MAX_INITIAL_POPULATION=1000;
+var MAX_INITIAL_POPULATION=300;
 var R0;
 
 //social distancing vars
@@ -88,7 +88,13 @@ document.getElementById('time_to_recover').value = time_to_recover;
 document.getElementById('social_distancing').addEventListener('input', function (e) {
     social_distancing = this.checked;
     console.log('distancing',social_distancing);
+    chance_to_transmit = 4;
+    document.getElementById('infection_rate').value = chance_to_transmit;
+    document.getElementById('infection_rate_text').innerText = chance_to_transmit;
+    R0 = (chance_to_transmit/100)/(1/time_to_recover);
+    document.getElementById("R0").innerHTML =  "R0  ≈ " + number_format(R0,2);
 });
+
 
 document.getElementById('social_distancing').checked = social_distancing;
 
@@ -123,7 +129,7 @@ document.getElementById('control_start').addEventListener('click', function (e) 
         stopSimulation();
         resetChart()
         init()
-        animate();
+        //animate();
         updateChart();
         updateChartInterval = setInterval(updateChart, 1000);
     }
