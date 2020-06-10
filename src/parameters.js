@@ -141,3 +141,8 @@ document.getElementById('control_stop').addEventListener('click', function (e) {
     resetChart();
 });
 
+
+let alertR0 = document.getElementById('alert-r0');
+if(R0<0.7) {
+    document.getElementById('alert-r0').setAttribute('class', 'alert alert-primary');
+}

@@ -21,6 +21,7 @@ w=0;
 R0 = (chance_to_transmit/100)/(1/time_to_recover);
 document.getElementById("R0").innerHTML =  "R0  ≈ " + number_format(R0,2);
 
+
 p1 =(75*init_population)/100;
     
     turns2=Math.round(p1)
@@ -340,7 +341,14 @@ function animate() {
   statistics.currentInfected = infected_count;
   statistics.currentRecovered = recovered_count;
   statistics.currentHealthy=healthy_count;
-   
+  
+  if(R0 < 0.7) {
+    document.getElementById('alert-r0').setAttribute('class', 'alert alert-primary');
+  } else if(R0 < 1 && R0 >= 0.7) {
+    document.getElementById('alert-r0').setAttribute('class', 'alert alert-warning');
+  } else {
+    document.getElementById('alert-r0').setAttribute('class', 'alert alert-danger');
+  }
 }
 
 
