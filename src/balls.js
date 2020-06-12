@@ -116,6 +116,7 @@ let isolation = [];  //isolation array
 // Object
 function Circle(x, y, radius, color, id) {
     this.id = id;
+    this.alive = 1;
     this.timer =0;
     this.turns=0;
     this.x = x;
@@ -207,9 +208,15 @@ function Circle(x, y, radius, color, id) {
       this.x += this.velocity.x;
       this.y += this.velocity.y;
     }
-      
     
-
+    //Graveyard
+    if(this.color == "Gray" && this.alive == 0) {
+      this.alive=-1;
+      this.x = randomIntFromRange(cw+radius,cw+100-radius);
+      this.y = randomIntFromRange(radius,ch-radius);
+      this.velocity.x=0;
+      this.velocity.y=0;  
+    }
 
     for (let i = 0; i < circles.length; i++) {
       if(this === circles[i]) continue; 
@@ -239,22 +246,39 @@ function Circle(x, y, radius, color, id) {
 let circles;
 
 function recover(circle) {
-  circle.color = "green";
+  if(circle.alive == 1) {
+    circle.color = "green";
+  }
 }
 
 function isolate(circle) {
   circle.timer = 1;
 }
 
+function kill(circle) {
+    //Mortalité = 5
+    circle.alive=0;
+    circle.color="Gray";
+}
+
 function transmit_infection(c1, c2) {
   //tranmit infection to others when colliding
-  if (c1.color !== "green" && c2.color !== "green") {
+  if (c1.color !== "green" && c2.color !== "green" && c1.color !== "Gray" && c2.color !== "Gray") {
       if (c1.color == "red" || c2.color == "red") {
           if (Math.random() * 100 < chance_to_transmit) {
               c1.color = "red";
               c2.color = "red";
-              setTimeout(recover, time_to_recover * 1000, c1);//Recoveing timer (1 second <=> 1 day)
-              setTimeout(recover, time_to_recover * 1000, c2);
+              if(Math.random()*100 < 3) {
+                setTimeout(kill, 5*1000,c1);
+              } else {
+                setTimeout(recover, time_to_recover * 1000, c1);//Recoveing timer (1 second <=> 1 day)
+              }
+              if(Math.random()*100 < 3) { //CFR = 3% case fatality rate 
+                setTimeout(kill, 5*1000,c2);
+              } else {
+                setTimeout(recover, time_to_recover * 1000, c2);
+              }
+              
               setInterval(isolate, 3000, c1);//isolation timer
               setInterval(isolate, 3000, c2);
 
@@ -337,17 +361,18 @@ function animate() {
   infected_count = summary_count(circles, "red");
   healthy_count = summary_count(circles, "blue");
   recovered_count = summary_count(circles, "green");
+  death_count = summary_count(circles, "Gray");
   statistics.totalPeople = init_population;
   statistics.currentInfected = infected_count;
   statistics.currentRecovered = recovered_count;
   statistics.currentHealthy=healthy_count;
-  
+  statistics.deaths = death_count;
   if(R0 < 0.7) {
-    document.getElementById('alert-r0').setAttribute('class', 'alert alert-primary');
+    document.getElementById('alert-r0').setAttribute('style', 'color: rgba(0, 0, 255,0.5);');
   } else if(R0 < 1 && R0 >= 0.7) {
-    document.getElementById('alert-r0').setAttribute('class', 'alert alert-warning');
+    document.getElementById('alert-r0').setAttribute('style', 'color: rgb(255, 255, 0);');
   } else {
-    document.getElementById('alert-r0').setAttribute('class', 'alert alert-danger');
+    document.getElementById('alert-r0').setAttribute('style', 'color: rgba(255, 0, 0, 0.5);');
   }
 }
 

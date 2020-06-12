@@ -20,6 +20,7 @@ var rdm = [];
 statistics.totalPeople = init_population;
 statistics.currentInfected = init_infected;
 statistics.currentRecovered = 0;
+statistics.deaths = 0;
 
 //Dashboard controls :
 //Initial population

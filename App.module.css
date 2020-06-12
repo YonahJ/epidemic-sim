@@ -19,15 +19,19 @@ body{
     align-items: center;
 }
 
-#alert_infected {
+.infected {
     /*margin: ;*/
-    border-bottom: 10px solid rgba(255, 0, 0,0.5); 
+    color: rgba(255, 0, 0,0.5); 
 }
-#alert_susceptible {
-    border-bottom: 10px solid rgba(0, 0, 255,0.5); 
+.susceptible {
+    color: rgba(0, 0, 255,0.5); 
 }
-#alert_recovered {
-    border-bottom: 10px solid rgba(0, 255, 0,0.5);
+.recovered {
+    color: rgba(0, 255, 0,0.5);
+}
+
+.dead {
+    color: 	rgb(128,128,128);
 }
 
 #summary-block {
@@ -36,5 +40,13 @@ body{
 
 .fa-color {
     color: red;
+}
+
+.dot {
+    height: 25px;
+    width: 25px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
 }
 

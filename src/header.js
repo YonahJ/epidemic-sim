@@ -3,7 +3,8 @@
 var counters = {
     healthy: document.getElementById('total_susceptible'),
     infected: document.getElementById('total_infected'),
-    immune: document.getElementById('total_recovered')
+    immune: document.getElementById('total_recovered'),
+    dead: document.getElementById('dead')
 }
 
 var statistics = {
@@ -11,6 +12,7 @@ var statistics = {
         this.totalPeople = init_population;
         this.currentRecovered = 0;
         this.currentInfected = init_infected;
+        this.deaths = 0;
     },
 
     /* Total people */
@@ -42,8 +44,17 @@ var statistics = {
         counters.healthy.innerHTML = this.currentHealthy;
     },
 
+    get deaths() {
+        return this._deaths;
+    },
+    set deaths(value) {
+        this._deaths = value;
+        counters.dead.innerHTML = this._deaths;
+        counters.healthy.innerHTML = this.currentHealthy;
+    },
+
     /* Current healthy */
     get currentHealthy() {
-        return this._totalPeople - this._currentInfected - this.currentRecovered;
+        return this._totalPeople - this._currentInfected - this.currentRecovered - this.deaths;
     },
 }

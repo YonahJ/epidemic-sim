@@ -14,6 +14,10 @@ var COLORS = {
         recovered: {
             fill: '#00FFE7',
             stroke: 'green',
+        },
+        dead: {
+            fill: '',
+            stroke: 'gray',
         }
     },
 }
@@ -37,6 +41,13 @@ var config = {
             label: 'Infected',
             fill: 'end',
             borderColor: COLORS.circles.infected.stroke,
+            data: [],
+            fill: '-1',
+        },
+        {
+            label: 'Dead',
+            fill: 'end',
+            borderColor: COLORS.circles.dead.stroke,
             data: [],
             fill: '-1',
         }]
@@ -91,6 +102,7 @@ function resetChart() {
     config.data.datasets[0].data = [];
     config.data.datasets[1].data = [];
     config.data.datasets[2].data = [];
+    config.data.datasets[3].data = [];
     elapsedDays = 0;
     if (updateChartInterval) {
         clearInterval(updateChartInterval);
@@ -98,17 +110,18 @@ function resetChart() {
     updateChart();
 }
 
-function pushData(total_healthy, total_infected, total_cured) {
+function pushData(total_healthy, total_infected, total_cured, total_deaths) {
     config.data.labels.push(elapsedDays++);
     config.data.datasets[0].data.push(total_healthy);
     config.data.datasets[1].data.push(total_cured);
     config.data.datasets[2].data.push(total_infected);
+    config.data.datasets[3].data.push(total_deaths);
 
     lineGraph.update();
 }
 
 function updateChart() {
-    pushData(statistics.currentHealthy, statistics.currentInfected, statistics.currentRecovered);
+    pushData(statistics.currentHealthy, statistics.currentInfected, statistics.currentRecovered, statistics.deaths);
 
     if (statistics.currentInfected === 0) {
         clearInterval(updateChartInterval);
