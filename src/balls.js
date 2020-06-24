@@ -221,7 +221,7 @@ function Circle(x, y, radius, color, id) {
     for (let i = 0; i < circles.length; i++) {
       if(this === circles[i]) continue; 
 
-      if (distance(this.x, this.y, circles[i].x,circles[i].y)-this.radius*2<0) {
+      if (distance(this.x, this.y, circles[i].x,circles[i].y)-this.radius*2<sd_factor) {
         //we trasnmit infection if the distance between two circles is 0 
         transmit_infection(this,circles[i]);   
       }
